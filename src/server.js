@@ -6,6 +6,7 @@ import { NODE_ENV, PORT, VERSION } from "./config/env.js";
 import logger from "./config/logger.js";
 import { testDBConnection } from "./db/testDbConnection.js";
 import favoriteRouter from "./modules/favorites/favorites.route.js";
+import job from "./config/cron.js";
 
 const app = express();
 
@@ -13,6 +14,11 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+//Cron job to be run only in production
+if (NODE_ENV === "production") {
+  job.start();
+}
 
 //Route
 app.use(`/api/${VERSION}/favorites`, favoriteRouter);
